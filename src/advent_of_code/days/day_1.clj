@@ -1,9 +1,9 @@
-(ns advent-of-code.day-1
+(ns advent-of-code.days.day-1
   (:require [clojure.java.io :as io]))
 
 (defn read-numbers
   []
-  (with-open [reader (io/reader "./resources/data_day_1.txt")]
+  (with-open [reader (io/reader (io/resource "data_day_1.txt"))]
     (vec (map read-string (line-seq reader)))))
 
 (defn get-resulting-freq
