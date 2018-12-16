@@ -1,27 +1,50 @@
-(ns advent-of-code.days.day-2)
+(ns advent-of-code.days.day-2
+  (:require [clojure.java.io :as io]))
 
-(defn read-lines
+(def box-IDs
+  (clojure.string/split-lines (slurp (io/resource "data_day_2.txt"))))
+
+
+;;; PART 1
+(defn get-total-exact-char-count
+  [exact-count]
+  (->> box-IDs
+       (map frequencies)
+       (map vals)
+       (keep #(some #{exact-count} %))
+       count))
+
+(defn part-one
   []
-  (clojure.string/split-lines (slurp "./resources/data_day_2.txt")))
+  (*
+    (get-total-exact-char-count 2)
+    (get-total-exact-char-count 3)))
 
-(defn get-letter-counts
-  [boxID]
-  (reduce
-    #(if (contains? %1 %2)
-       (update %1 %2 inc)
-       (assoc %1 %2 1))
-    {}
-    (clojure.string/split boxID #"\B")))
 
-(defn find-occurrences
-  [boxID]
-  (map #(hash-map (string 1))
-   (distinct
-     (filter #(or (= 2 %) (= 3 %))
-       (vals
-         (get-letter-counts boxID))))))
+;;; PART 2
+(defn remove-char
+  [pos string]
+  (let [before (subs string 0 pos)
+        after (subs string (inc pos))]
+    (str before after)))
 
-(defn calculate-checksum
-  [box-IDs]
-  (reduce find-occurrences {2 0 3 0} (read-lines)))
+(defn get-duplicate-or-conj
+  [seen, new]
+  (if (some #{new} seen)
+    (reduced new)
+    (conj seen new)))
 
+(defn find-first-duplicate
+  [coll]
+  (let [result (reduce get-duplicate-or-conj #{} coll)]
+    (if (coll? result) nil result)))
+
+(defn find-duplicate-without-char-at-pos
+  [pos]
+  (->> box-IDs
+       (map (partial remove-char pos))
+       (find-first-duplicate)))
+
+(defn part-two
+  []
+  (some find-duplicate-without-char-at-pos (range)))
