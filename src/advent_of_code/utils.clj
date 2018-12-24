@@ -9,6 +9,21 @@
        line-seq
        vec))
 
+(defn file->string
+  "Read all contents of file into a string."
+  [file]
+  (->> (io/resource file)
+       slurp))
+
+(defn is-same-but-capitalized
+  "Return true if s1 and s2 are the the same letter and have different capitalization, false otherwise."
+  [s1, s2]
+  (let [case-diff 32
+        char-diff (Math/abs (compare s1 s2))]
+    (and
+      (= char-diff case-diff)
+      (= (clojure.string/lower-case s1) (clojure.string/lower-case s2)))))
+
 (defn index-of
   "Find index of element e in coll or nil if e doesn't exist."
   [e coll]
@@ -26,8 +41,12 @@
   (apply max-key f map))
 
 (defn update-from
-  "Update vector values from index to end to those acquired from calling f for each element."
+  "Update vector values from index to end to those returned by applying f for each element."
   [coll index f]
   (let [keep-vals (subvec coll 0 index)
         update-vals (subvec coll index)]
     (into keep-vals (map f update-vals))))
+
+(defn update-vals [map vals f]
+  "Update vals in map to those returned by applying f to old vals."
+  (reduce #(update % %2 f) map vals))
