@@ -34,10 +34,13 @@
      :ymin (apply min y-coords)
      :ymax (apply max y-coords)}))
 
+(defn get-locations [area]
+  (for [x (range (:xmin area) (inc (:xmax area)))
+        y (range (:ymin area) (inc (:ymax area)))]
+    {:x x :y y}))
+
 (defn get-locations-with-closest-coord [coordinates area]
-  (let [locations (for [x (range (:xmin area) (inc (:xmax area)))
-                        y (range (:ymin area) (inc (:ymax area)))]
-                    {:x x :y y})]
+  (let [locations (get-locations area)]
     (map #(assoc % :closest-coord (calculate-closest-coordinate coordinates %)) locations)))
 
 (defn overlapping? [location] (= -1 (:closest-coord location)))
@@ -61,3 +64,17 @@
          frequencies
          vals
          (apply max))))
+
+;;;; PART 2
+
+(def max-total-distance 10000)
+
+(defn dist-to-all-coords [location coordinates]
+  (->> (map (partial manhattan-distance location) coordinates)
+       (reduce + 0)))
+
+(defn part-two []
+  (->> (get-coordinate-area coordinates)
+       (get-locations)
+       (filter #(< (dist-to-all-coords % coordinates) max-total-distance))
+       count))
