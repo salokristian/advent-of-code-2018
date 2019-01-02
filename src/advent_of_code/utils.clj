@@ -24,6 +24,8 @@
       (= char-diff case-diff)
       (= (clojure.string/lower-case s1) (clojure.string/lower-case s2)))))
 
+(defn distance [loc1 loc2] (Math/abs (- loc1 loc2)))
+
 (defn index-of
   "Find index of element e in coll or nil if e doesn't exist."
   [e coll]
