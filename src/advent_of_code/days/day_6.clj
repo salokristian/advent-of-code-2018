@@ -39,7 +39,7 @@
         y (range (:ymin area) (inc (:ymax area)))]
     {:x x :y y}))
 
-(defn get-locations-with-closest-coord [coordinates area]
+(defn get-locations-with-closest-coord [area coordinates]
   (let [locations (get-locations area)]
     (map #(assoc % :closest-coord (calculate-closest-coordinate coordinates %)) locations)))
 
@@ -50,17 +50,17 @@
     (some #{(:x location)} [(:xmin area) (:xmax area)])
     (some #{(:y location)} [(:ymin area) (:ymax area)])))
 
-(defn remove-invalid-locations [locations area]
+(defn remove-invalid-locations [area locations]
   (let [invalid-coords (->> (filter #(or (on-areas-edge? % area) (overlapping? %)) locations)
                              (map :closest-coord)
                              set)]
     (remove #(contains? invalid-coords (:closest-coord %)) locations)))
 
 (defn part-one []
-  (let [area (get-coordinate-area coordinates)
-        locs-with-closest (get-locations-with-closest-coord coordinates area)
-        valid-locs (remove-invalid-locations locs-with-closest area)]
-    (->> (map :closest-coord valid-locs)
+  (let [area (get-coordinate-area coordinates)]
+    (->> (get-locations-with-closest-coord area coordinates)
+         (remove-invalid-locations area)
+         (map :closest-coord)
          frequencies
          vals
          (apply max))))
