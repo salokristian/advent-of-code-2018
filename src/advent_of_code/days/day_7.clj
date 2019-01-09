@@ -2,6 +2,8 @@
   (:require [advent-of-code.utils :as utils]
             [advent_of_code.kahn.kahn :as kahn]))
 
+;;;; PART 1
+
 (defn parse-instruction [instruction]
   {:step (get instruction 36)
    :do-before (get instruction 5)})
@@ -22,4 +24,6 @@
 
 (defn part-one []
   (-> (instructions->dep-graph "data_day_7.txt")
-      (kahn/kahn-sort lexical-comparator)))
+      (kahn/kahn-sort lexical-comparator)
+      (clojure.string/join)))
+
