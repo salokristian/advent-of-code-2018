@@ -1,0 +1,3 @@
+[submodule "src/advent_of_code/kahn"]
+	path = src/advent_of_code/kahn
+	url = https://gist.github.com/salokristian/e8045120fc05af1d396c0fcd9dd8b199
