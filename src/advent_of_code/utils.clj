@@ -26,10 +26,19 @@
 
 (defn distance [loc1 loc2] (Math/abs (- loc1 loc2)))
 
+(def not-nil? (complement nil?))
+
+(defn zip [& colls] (apply map vector colls))
+
 (defn index-of
   "Find index of element e in coll or nil if e doesn't exist."
   [e coll]
   (first (keep-indexed #(if (= e %2) %1) coll)))
+
+(defn positions
+  "Find the indices of vals for which pred returns true."
+  [pred coll]
+  (keep-indexed (fn [idx x] (if (pred x) idx)) coll))
 
 (defn get-index-of-max-val
   "Find index of max value in coll."
@@ -48,6 +57,12 @@
   (let [keep-vals (subvec coll 0 index)
         update-vals (subvec coll index)]
     (into keep-vals (map f update-vals))))
+
+(defn update-first
+  "Update the first value in coll for which pred returns true."
+  [coll pred val]
+  (let [idx (-> (positions pred coll) first)]
+    (assoc coll idx val)))
 
 (defn update-vals [map vals f]
   "Update vals in map to those returned by applying f to old vals."
